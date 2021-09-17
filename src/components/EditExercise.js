@@ -29,7 +29,7 @@ export default function CreateExercise() {
     )
     .catch((error => {
       console.log(error);
-    }))}, [])
+    }))}, [editId])
     
 
   //   axios.get('http://localhost:5000/users/')
