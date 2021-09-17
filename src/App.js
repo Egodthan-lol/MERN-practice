@@ -9,10 +9,8 @@ import EditExercise from "./components/EditExercise";
 import CreateExercise from "./components/CreateExercise";
 import CreateUser from "./components/CreateUser";
 import Loading from "./components/Loading";
-import Profile from "./components/Profile";
 import ProtectedRoute from "./auth/protected-route";
 import Home from "./components/Home";
-
 function App() {
   const { isLoading } = useAuth0();
 
@@ -25,8 +23,7 @@ function App() {
         <Navbar />
         <br/>
         <Route path="/" exact component={Home} />
-        <ProtectedRoute path="/exercises" exact component={ExercisesList} />
-        <ProtectedRoute path="/profile" component={Profile} />
+        <ProtectedRoute path="/exercises" component={ExercisesList} />
         <ProtectedRoute path="/edit/:id" component={EditExercise} />
         <ProtectedRoute path="/create" component={CreateExercise} />
         <ProtectedRoute path="/user" component={CreateUser} />

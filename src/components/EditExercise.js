@@ -2,11 +2,13 @@ import React, { useState, useEffect} from 'react';
 import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import { useAuth0  } from '@auth0/auth0-react';
 
 export default function CreateExercise() {
-  const [users, setUsers] = useState([]);
+  const { user } = useAuth0();
+  const { email } = user;
+  // const [users, setUsers] = useState([]);
   const [value, setValue] = useState({
-    username: '',
     description: '',
     duration: 0,
     date: new Date(),
@@ -18,7 +20,6 @@ export default function CreateExercise() {
     .then(response => {
       if (response.data){
         setValue({
-          username: response.data.username,
           description: response.data.description,
           duration: response.data.duration,
           date: new Date(response.data.date)
@@ -28,24 +29,24 @@ export default function CreateExercise() {
     )
     .catch((error => {
       console.log(error);
-    }))
+    }))}, [])
     
 
-    axios.get('http://localhost:5000/users/')
-    .then(response => {
-      setUsers(response.data.map(user => user.username))
-    })
-    .catch((error => {
-      console.log(error);
-    }))
-  }, [])
+  //   axios.get('http://localhost:5000/users/')
+  //   .then(response => {
+  //     setUsers(response.data.map(user => user.username))
+  //   })
+  //   .catch((error => {
+  //     console.log(error);
+  //   }))
+  // }, [])
   
-  const onChangeUsername = (e) => {
-    setValue({
-      ...value,
-      username: e.target.value
-    })
-  }
+  // const onChangeUsername = (e) => {
+  //   setValue({
+  //     ...value,
+  //     username: e.target.value
+  //   })
+  // }
 
   const onChangeDescription = (e) => {
     setValue({
@@ -71,15 +72,15 @@ export default function CreateExercise() {
   const onSubmit = (e) => {
     e.preventDefault();
     const updateItem = {
-      username: value.username,
       description: value.description,
       duration: value.duration,
-      date: value.date
+      date: value.date,
+      email: email
     }
     axios.post('http://localhost:5000/exercises/update/' + editId, updateItem)
     .then(res => console.log(res.data))
 
-    window.location = '/';
+    window.location = '/exercises';
   }
 
   console.log("value", value)
@@ -87,7 +88,7 @@ export default function CreateExercise() {
     <div>
       <h3>Edit Exercise Log</h3>
       <form onSubmit={onSubmit}>
-        <div className="form-group">
+        {/* <div className="form-group">
           <label>Username: </label>
           <select
             required
@@ -103,14 +104,14 @@ export default function CreateExercise() {
               })
             }
           </select>
-        </div>
+        </div> */}
         <div className="form-group">
           <label>Description: </label>
           <input type="text"
             required
             className="form-control"
             value={value.description}
-            placeholder='fill in your description e.g. This is for test'
+            placeholder='fill in your description'
             onChange={onChangeDescription}
           />
         </div>
@@ -120,6 +121,7 @@ export default function CreateExercise() {
             type="text"
             className="form-control"
             value={value.duration}
+            placeholder="fill in your duration for the exercise"
             onChange={onChangeDuration}
           />
         </div>

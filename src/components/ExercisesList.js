@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth0 } from '@auth0/auth0-react';
+import Button from 'react-bootstrap/Button';
 export default function ExercisesList(){
-  
+  const { user } = useAuth0();
+  const { email } = user;
   const [list, setList] = useState([])
   useEffect(() => {
     axios.get('http://localhost:5000/exercises')
       .then(response => {
-        console.log('response: ', response.data);
         setList(response.data);
       })
       .catch((error) => {
@@ -16,13 +18,12 @@ export default function ExercisesList(){
   }, [])
   const Exercise = (props) => (
     <tr>
-      <td>{props.exercise.username}</td>
       <td>{props.exercise.description}</td>
       <td>{props.exercise.duration}</td>
       <td>{props.exercise.date.substring(0,10)}</td>
       <td>
-      <Link to={"/edit/"+props.exercise._id}>edit
-      </Link> | <a href="#" onClick={() => { props.deleteExercise(props.exercise._id) }}>delete</a>
+      <Button variant='info' size='sm'><Link style={{textDecoration: 'none', color:'black'}} to={"/edit/"+props.exercise._id}>edit
+      </Link></Button> | <Button variant='info' size='sm' onClick={() => { props.deleteExercise(props.exercise._id) }}>delete</Button>
       </td>
     </tr>
   )
@@ -30,23 +31,25 @@ export default function ExercisesList(){
 
   const deleteExercise = (id) => {
     axios.delete('http://localhost:5000/exercises/' + id)
-      .then(res => console.log(res.data));
+    .then(res => console.log(res.data))
+    .catch((error) => console.log(error));
     setList(list.filter(el => el._id !== id));
   }
 
   const ExercisesList = () => {
-    return list.map(currentexercise => {
-      console.log(currentexercise);
+    const filteredList = list.filter(exe => exe.email === email)
+    return filteredList.map(currentexercise => {
+      console.log(currentexercise)
       return <Exercise exercise={currentexercise} deleteExercise={deleteExercise} key = {currentexercise._id}/>
     })
   }
   return (
     <div>
-      <h3>Logged Exercises</h3>
+      <h3>Exercises to do</h3>
       <table className="table">
         <thead className="thead-light">
           <tr>
-            <th>Username</th>
+            {/* <th>Username</th> */}
             <th>Description</th>
             <th>Duration</th>
             <th>Date</th>

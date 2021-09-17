@@ -1,41 +1,43 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import DatePicker from 'react-datepicker';
+import { useAuth0 } from "@auth0/auth0-react";
 import "react-datepicker/dist/react-datepicker.css";
 
 export default function CreateExercise() {
+  const { user } = useAuth0();
+  const { email } = user;
   const [value, setValue] = useState({
-    username: '',
     description: '',
-    duration: 0,
+    duration: '',
     date: new Date(),
-    users: ['test']
+    email: email,
   });
 
-  useEffect(() => {
-    axios.get('http://localhost:5000/users/')
-    .then(response => {
-      if (response.data.length > 0){
-        console.log('useeffect ran')
-        // console.log(`response.data ${response.data}`)
-        setValue({
-          ...value,
-          users: response.data.map(user => user.username),
-          username: response.data[0].username
-        });
-      }
-    })
-    .catch((error => {
-      console.log(error);
-    }))
-  }, [])
+  // useEffect(() => {
+  //   axios.get('http://localhost:5000/users/')
+  //   .then(response => {
+  //     if (response.data.length > 0){
+  //       console.log('useeffect ran')
+  //       // console.log(`response.data ${response.data}`)
+  //       setValue({
+  //         ...value,
+  //         users: response.data.map(user => user.username),
+  //         username: response.data[0].username
+  //       });
+  //     }
+  //   })
+  //   .catch((error => {
+  //     console.log(error);
+  //   }))
+  // }, [])
   
-  const onChangeUsername = (e) => {
-    setValue({
-      ...value,
-      username: e.target.value
-    })
-  }
+  // const onChangeUsername = (e) => {
+  //   setValue({
+  //     ...value,
+  //     username: e.target.value
+  //   })
+  // }
 
   const onChangeDescription = (e) => {
     setValue({
@@ -60,17 +62,16 @@ export default function CreateExercise() {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    console.log(value);
     axios.post('http://localhost:5000/exercises/add', value)
     .then(res => console.log(res.data))
-
-    window.location = '/';
+    .catch((error) => console.log(error));
+    window.location = '/exercises';
   }
   return (
     <div>
       <h3>Create New Exercise Log</h3>
       <form onSubmit={onSubmit}>
-        <div className="form-group">
+        {/* <div className="form-group">
           <label>Username: </label>
           <select
             required
@@ -86,12 +87,13 @@ export default function CreateExercise() {
               })
             }
           </select>
-        </div>
+        </div> */}
         <div className="form-group">
           <label>Description: </label>
           <input type="text"
             required
             className="form-control"
+            placeholder='fill in your description'
             value={value.description}
             onChange={onChangeDescription}
           />
@@ -101,6 +103,7 @@ export default function CreateExercise() {
           <input
             type="text"
             className="form-control"
+            placeholder="fill in your duration for the exercise"
             value={value.duration}
             onChange={onChangeDuration}
           />
