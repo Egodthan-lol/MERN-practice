@@ -18,7 +18,9 @@ export default function Navbar() {
             <Link to="/user" className="nav-link">Create User</Link>
           </li> */}
         </ul>
-        <AuthNav />
+        <div style={{textAlign: 'right'}}>
+          <AuthNav/>
+        </div>
       </div>
     </nav>
   );
